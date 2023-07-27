@@ -1,0 +1,17 @@
+{
+  "name" : "qtmmaud",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "dad2e6f2aa3b680c69aaba67f10e2b4b9b4861e9",
+  "dependencies" : [ {
+    "name" : "magic-enum",
+    "version>=" : "0.9.2"
+  }, {
+    "name" : "curl",
+    "version>=" : "8.1.2#2",
+    "$comment" : "    # this is heuristically generated, and may not be correct\n\n    find_package(CURL CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE CURL::libcurl)\n"
+  }, {
+    "name" : "nlohmann-json",
+    "version>=" : "3.11.2",
+    "$comment" : "    find_package(nlohmann_json CONFIG REQUIRED)\n\n    target_link_libraries(main PRIVATE nlohmann_json::nlohmann_json)\n"
+  }]
+}
