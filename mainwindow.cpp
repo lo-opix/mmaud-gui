@@ -25,8 +25,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->scrollArea->setWidget(ModsWidget);
     MainPageSpinner.setParent(this);
     connect(ui->ReloadMods, &QPushButton::released, this, &MainWindow::reloadMods);
+    connect(ui->LaunchMinecraftBTN, &QPushButton::released, this, &MainWindow::launchMinecraft);
 
     MainWindow::InitModsPage();
+}
+
+void MainWindow::launchMinecraft() {
+    system(R"(C:\Windows\explorer.exe shell:appsFolder\Microsoft.4297127D64EC6_8wekyb3d8bbwe!Minecraft)");
+    MainWindow::~MainWindow();
 }
 
 void MainWindow::reloadMods() {

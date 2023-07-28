@@ -52,6 +52,8 @@ public slots:
     void InitModsPage();
 
     void reloadMods();
+
+    void launchMinecraft();
 };
 
 class DownloadRemoteIndexThread : public QThread {
