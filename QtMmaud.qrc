@@ -5,5 +5,7 @@
         <file alias="Download.svg">Resources/Icons/download_FILL0_wght400_GRAD0_opsz48.svg</file>
         <file alias="Downloading.svg">Resources/Icons/downloading_FILL0_wght400_GRAD0_opsz48.svg</file>
         <file alias="Question_Mark.svg">Resources/Icons/question_mark_FILL0_wght400_GRAD0_opsz48.svg</file>
+        <file alias="Contrast.svg">Resources/Icons/contrast_FILL0_wght400_GRAD0_opsz48.svg</file>
+        <file alias="Contrast-white.svg">Resources/Icons/contrast_FILL0_wght400_GRAD0_opsz48-white.svg</file>
     </qresource>
 </RCC>

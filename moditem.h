@@ -48,6 +48,7 @@ public:
 
     ForgeVersionObj GetForgeVersionsInstalled();
 
+    void setColorTheme(bool darkMode);
 
 public slots:
 

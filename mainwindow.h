@@ -42,6 +42,8 @@ private:
 
     std::vector<std::string> GetLocalIndex();
 
+    bool isInDarkMode = false;
+
 
 public slots:
 
@@ -54,6 +56,8 @@ public slots:
     void reloadMods();
 
     void launchMinecraft();
+
+    void switchColorTheme();
 };
 
 class DownloadRemoteIndexThread : public QThread {

@@ -16,7 +16,6 @@ namespace fs = std::filesystem;
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-
     auto *ModsWidget = new QWidget();
     auto *ModsWidgetLayout = new QVBoxLayout();
     ModsWidgetLayout->setAlignment(Qt::AlignTop);
@@ -26,8 +25,45 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     MainPageSpinner.setParent(this);
     connect(ui->ReloadMods, &QPushButton::released, this, &MainWindow::reloadMods);
     connect(ui->LaunchMinecraftBTN, &QPushButton::released, this, &MainWindow::launchMinecraft);
+    connect(ui->ColorThemeBTN, &QPushButton::released, this, &MainWindow::switchColorTheme);
+
 
     MainWindow::InitModsPage();
+}
+
+void MainWindow::switchColorTheme() {
+    if (!isInDarkMode) {
+        setStyleSheet("QWidget#centralwidget {background-color: #16151a} QPushButton {background-color:#2E2C38; border-radius: 5px; border: 1px solid #3E3C49}");
+        ui->label_2->setStyleSheet("color: white");
+        ui->LaunchMinecraftBTN->setStyleSheet("color: white;");
+        ui->ReloadMods->setStyleSheet("color: white;");
+        ui->scrollArea->setStyleSheet("background-color: #16151a");
+        ui->ColorThemeBTN->setIcon(QIcon(":/Resources/Icons/Contrast-white.svg"));
+
+        auto *scrollWidget = dynamic_cast<QVBoxLayout *>(ui->scrollArea->widget()->layout());
+
+        for (int i = 0; i < scrollWidget->count(); ++i) {
+            auto *modWidget = dynamic_cast<ModItem*>(scrollWidget->itemAt(i)->widget());
+            modWidget->setColorTheme(1);
+            modWidget->applyForgeColorTheme();
+        }
+        isInDarkMode = true;
+    } else {
+        setStyleSheet("QWidget#centralwidget {background-color: #F4F4F4} QPushButton {background-color: #EAEAEA; border-radius: 5px; border: 1px solid #CCCCCC} *{color: #111111}");
+        ui->label_2->setStyleSheet("");
+        ui->LaunchMinecraftBTN->setStyleSheet("");
+        ui->ReloadMods->setStyleSheet("");
+        ui->scrollArea->setStyleSheet("");
+        ui->ColorThemeBTN->setIcon(QIcon(":/Resources/Icons/Contrast.svg"));
+        auto *scrollWidget = dynamic_cast<QVBoxLayout *>(ui->scrollArea->widget()->layout());
+
+        for (int i = 0; i < scrollWidget->count(); ++i) {
+            auto *modWidget = dynamic_cast<ModItem*>(scrollWidget->itemAt(i)->widget());
+            modWidget->setColorTheme(0);
+            modWidget->applyForgeColorTheme();
+        }
+        isInDarkMode = false;
+    }
 }
 
 void MainWindow::launchMinecraft() {
@@ -40,7 +76,7 @@ void MainWindow::reloadMods() {
     MainWindow::InitModsPage();
 }
 
-void MainWindow::InitModsPage(){
+void MainWindow::InitModsPage() {
     auto *dl_Thread = new DownloadRemoteIndexThread(this, GoogleApiKey.c_str());
     connect(dl_Thread, &DownloadRemoteIndexThread::dl_finished, this, &MainWindow::postRemoteIndexDownload);
     connect(dl_Thread, &DownloadRemoteIndexThread::finished, dl_Thread, &QObject::deleteLater);

@@ -50,6 +50,16 @@ ModItem::~ModItem() {
     delete ui;
 }
 
+void ModItem::setColorTheme(bool darkMode) {
+    if (darkMode){
+        ui->frame->setStyleSheet("color: white");
+        ui->DownloadBtn->setStyleSheet("background-color:#2E2C38");
+    }else{
+        ui->frame->setStyleSheet("");
+        ui->DownloadBtn->setStyleSheet("");
+    }
+}
+
 void ModItem::changeModStatus(ModStatus new_status) {
     currentModStatus = new_status;
     const char *modStatusString;
