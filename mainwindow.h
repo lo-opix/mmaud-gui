@@ -40,7 +40,7 @@ private:
 
     WaitingSpinnerWidget MainPageSpinner = new WaitingSpinnerWidget();
 
-    std::vector<std::string> GetLocalIndex();
+    static std::vector<std::string> GetLocalIndex();
 
     bool isInDarkMode = false;
 
@@ -58,6 +58,12 @@ public slots:
     void launchMinecraft();
 
     void switchColorTheme();
+
+    void openSettings();
+
+    static void setFolderId(const char* folder_id);
+
+    static std::string getFolderId();
 };
 
 class DownloadRemoteIndexThread : public QThread {
@@ -66,11 +72,12 @@ Q_OBJECT
 public :
     MainWindow *mW;
     const char *apiKey;
-    std::string folderId = "1OoRyW6JkPLGTeDtUBnU11eLYvv3byKNm";
+    std::string _folderId;
 
-    explicit DownloadRemoteIndexThread(MainWindow *remoteModItem, const char *remoteApiKey) {
+    explicit DownloadRemoteIndexThread(MainWindow *remoteModItem, const char *remoteApiKey, std::string folderId) {
         mW = remoteModItem;
         apiKey = remoteApiKey;
+        _folderId = std::move(folderId);
     }
 
     void run() override {
@@ -81,7 +88,7 @@ public :
         std::string modLocation = appdataRoaming + R"(\Local\Temp\mmaud-remote_index.temp)";
 
         std::string index_url =
-                "https://www.googleapis.com/drive/v3/files?q='" + folderId + "'+in+parents&key=" + apiKey;
+                "https://www.googleapis.com/drive/v3/files?q='" + _folderId + "'+in+parents&key=" + apiKey;
 
         curl = curl_easy_init();
         if (curl) {

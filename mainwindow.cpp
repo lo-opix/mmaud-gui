@@ -7,6 +7,7 @@
 #include <filesystem>
 #include "secrets.h"
 #include <sys/stat.h>
+#include <QLineEdit>
 
 
 using namespace std;
@@ -26,14 +27,67 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->ReloadMods, &QPushButton::released, this, &MainWindow::reloadMods);
     connect(ui->LaunchMinecraftBTN, &QPushButton::released, this, &MainWindow::launchMinecraft);
     connect(ui->ColorThemeBTN, &QPushButton::released, this, &MainWindow::switchColorTheme);
+    connect(ui->SettingsBtn, &QPushButton::released, this, &MainWindow::openSettings);
 
 
     MainWindow::InitModsPage();
 }
 
+std::string MainWindow::getFolderId() {
+    ifstream file;
+    std::string appDataRoaming = getenv("APPDATA");
+    file.open(appDataRoaming + "\\.minecraft\\mmaud-folder-id.txt");
+
+    std::string folder_id;
+    if (file.good()) {
+        getline(file, folder_id);
+        file.close();
+        return folder_id;
+    } else {
+        file.close();
+        return folder_id;
+    }
+}
+
+void MainWindow::setFolderId(const char *folder_id) {
+    std::string appDataRoaming = getenv("APPDATA");
+    std::string fullPath = appDataRoaming + "\\.minecraft\\mmaud-folder-id.txt";
+
+    std::ofstream file(fullPath);
+    file.write(folder_id, strlen(folder_id));
+    file.close();
+}
+
+void MainWindow::openSettings() {
+    auto *settingsWidget = new QWidget();
+    auto *layout = new QVBoxLayout();
+    settingsWidget->setLayout(layout);
+    auto *label = new QLabel(tr("Set your Folder id here"));
+
+    auto currentFolderId = MainWindow::getFolderId();
+
+    auto *lineEdit = new QLineEdit(tr(currentFolderId.c_str()));
+    auto *saveBtn = new QPushButton(tr("Save"));
+    layout->addWidget(label);
+    layout->addWidget(lineEdit);
+    layout->addWidget(saveBtn);
+
+
+    MainWindow::ShowLoadingScreen(true);
+
+    settingsWidget->show();
+
+    connect(saveBtn, &QPushButton::released, this, [lineEdit, this] {
+        MainWindow::setFolderId(lineEdit->text().toStdString().c_str());
+        MainWindow::reloadMods();
+    });
+    connect(saveBtn, &QPushButton::released, settingsWidget, &QWidget::hide);
+}
+
 void MainWindow::switchColorTheme() {
     if (!isInDarkMode) {
-        setStyleSheet("QWidget#centralwidget {background-color: #16151a} QPushButton {background-color:#2E2C38; border-radius: 5px; border: 1px solid #3E3C49}");
+        setStyleSheet(
+                "QWidget#centralwidget {background-color: #16151a} QPushButton {background-color:#2E2C38; border-radius: 5px; border: 1px solid #3E3C49}");
         ui->label_2->setStyleSheet("color: white");
         ui->LaunchMinecraftBTN->setStyleSheet("color: white;");
         ui->ReloadMods->setStyleSheet("color: white;");
@@ -43,13 +97,14 @@ void MainWindow::switchColorTheme() {
         auto *scrollWidget = dynamic_cast<QVBoxLayout *>(ui->scrollArea->widget()->layout());
 
         for (int i = 0; i < scrollWidget->count(); ++i) {
-            auto *modWidget = dynamic_cast<ModItem*>(scrollWidget->itemAt(i)->widget());
+            auto *modWidget = dynamic_cast<ModItem *>(scrollWidget->itemAt(i)->widget());
             modWidget->setColorTheme(1);
             modWidget->applyForgeColorTheme();
         }
         isInDarkMode = true;
     } else {
-        setStyleSheet("QWidget#centralwidget {background-color: #F4F4F4} QPushButton {background-color: #EAEAEA; border-radius: 5px; border: 1px solid #CCCCCC} *{color: #111111}");
+        setStyleSheet(
+                "QWidget#centralwidget {background-color: #F4F4F4} QPushButton {background-color: #EAEAEA; border-radius: 5px; border: 1px solid #CCCCCC} *{color: #111111}");
         ui->label_2->setStyleSheet("");
         ui->LaunchMinecraftBTN->setStyleSheet("");
         ui->ReloadMods->setStyleSheet("");
@@ -58,7 +113,7 @@ void MainWindow::switchColorTheme() {
         auto *scrollWidget = dynamic_cast<QVBoxLayout *>(ui->scrollArea->widget()->layout());
 
         for (int i = 0; i < scrollWidget->count(); ++i) {
-            auto *modWidget = dynamic_cast<ModItem*>(scrollWidget->itemAt(i)->widget());
+            auto *modWidget = dynamic_cast<ModItem *>(scrollWidget->itemAt(i)->widget());
             modWidget->setColorTheme(0);
             modWidget->applyForgeColorTheme();
         }
@@ -77,7 +132,10 @@ void MainWindow::reloadMods() {
 }
 
 void MainWindow::InitModsPage() {
-    auto *dl_Thread = new DownloadRemoteIndexThread(this, GoogleApiKey.c_str());
+    if (this->getFolderId().empty()){
+        QMessageBox::warning(this, tr("Warning"), tr("Warning: Folder Id is not set!\nSet it by clicking on the settings button"));
+    }
+    auto *dl_Thread = new DownloadRemoteIndexThread(this, GoogleApiKey.c_str(), this->getFolderId());
     connect(dl_Thread, &DownloadRemoteIndexThread::dl_finished, this, &MainWindow::postRemoteIndexDownload);
     connect(dl_Thread, &DownloadRemoteIndexThread::finished, dl_Thread, &QObject::deleteLater);
 
@@ -106,11 +164,13 @@ void MainWindow::ShowLoadingScreen(bool show) {
         if (ui->frame->graphicsEffect()) {
             ui->frame->graphicsEffect()->setEnabled(true);
             MainPageSpinner.start();
+            this->setDisabled(true);
         } else {
             MainPageSpinner.start();
             auto blur = new QGraphicsBlurEffect(this);
             blur->setBlurRadius(10);
             ui->frame->setGraphicsEffect(blur);
+            this->setDisabled(true);
         }
 
     } else {
@@ -118,6 +178,7 @@ void MainWindow::ShowLoadingScreen(bool show) {
         if (ui->frame->graphicsEffect()) {
             ui->frame->graphicsEffect()->setEnabled(false);
         }
+        this->setDisabled(false);
     }
 }
 

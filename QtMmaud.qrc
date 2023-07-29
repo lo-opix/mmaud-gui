@@ -7,5 +7,7 @@
         <file alias="Question_Mark.svg">Resources/Icons/question_mark_FILL0_wght400_GRAD0_opsz48.svg</file>
         <file alias="Contrast.svg">Resources/Icons/contrast_FILL0_wght400_GRAD0_opsz48.svg</file>
         <file alias="Contrast-white.svg">Resources/Icons/contrast_FILL0_wght400_GRAD0_opsz48-white.svg</file>
+        <file alias="Settings.svg">Resources/Icons/settings_FILL0_wght400_GRAD0_opsz48.svg</file>
+        <file alias="Settings-white.svg">Resources/Icons/settings_FILL0_wght400_GRAD0_opsz48-white.svg</file>
     </qresource>
 </RCC>

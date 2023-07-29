@@ -197,6 +197,29 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="SettingsBtn">
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>40</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="QtMmaud.qrc">
+             <normaloff>:/Resources/Icons/Settings.svg</normaloff>:/Resources/Icons/Settings.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>35</width>
+             <height>35</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="ColorThemeBTN">
            <property name="maximumSize">
             <size>
@@ -259,7 +282,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>1003</width>
+            <width>1000</width>
             <height>520</height>
            </rect>
           </property>
