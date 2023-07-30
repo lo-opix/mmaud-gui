@@ -224,17 +224,17 @@ void MainWindow::postFindModsToDownload(std::vector<MOD> modsToDl, std::vector<s
     for (auto &mod: modsToDl) {
         std::string mod_url = "https://www.googleapis.com/drive/v3/files/" + mod.id + "?alt=media&key=" + GoogleApiKey;
         auto *modWidget = new ModItem(mod.name, "V??", mod_url);
-        modWidget->applyForgeColorTheme(isInDarkMode);
+
         ModItem::ForgeVersionObj ForgeV;
 
         if (mod.name.substr(0, 5) == "forge") { //Check if the mod is forge
             ForgeV = modWidget->GetForgeVersionsInstalled();
             std::string thisForgeV = mod.name.substr(0, mod.name.find_last_of('-'));
-            thisForgeV.substr(thisForgeV.find_last_of('-') + 1);
+            thisForgeV = thisForgeV.substr(thisForgeV.find_last_of('-') + 1);
             if (thisForgeV == ForgeV.forge_version) {
                 modWidget->changeModStatus(ModItem::ModStatus::Installed);
             } else {
-                modWidget->changeModStatus(ModItem::ModStatus::Not_Installed);
+                modWidget->changeModStatus(ModItem::ModStatus::Not_Downloaded);
             }
 
         } else {
@@ -244,6 +244,7 @@ void MainWindow::postFindModsToDownload(std::vector<MOD> modsToDl, std::vector<s
         auto *scrollWidget = dynamic_cast<QVBoxLayout *>(ui->scrollArea->widget()->layout());
         scrollWidget->addWidget(modWidget);
         modWidget->setColorTheme(isInDarkMode);
+        modWidget->applyForgeColorTheme(isInDarkMode);
     }
     for (auto &mod: modsAlreadyDl) {
         auto *modWidget = new ModItem(mod);
@@ -265,10 +266,10 @@ void MainWindow::postFindModsToDownload(std::vector<MOD> modsToDl, std::vector<s
         }
 
 
-        modWidget->applyForgeColorTheme(isInDarkMode);
         auto *scrollWidget = dynamic_cast<QVBoxLayout *>(ui->scrollArea->widget()->layout());
         scrollWidget->addWidget(modWidget);
         modWidget->setColorTheme(isInDarkMode);
+        modWidget->applyForgeColorTheme(isInDarkMode);
     }
 
 
