@@ -51,10 +51,10 @@ ModItem::~ModItem() {
 }
 
 void ModItem::setColorTheme(bool darkMode) {
-    if (darkMode){
+    if (darkMode) {
         ui->frame->setStyleSheet("color: white");
         ui->DownloadBtn->setStyleSheet("background-color:#2E2C38");
-    }else{
+    } else {
         ui->frame->setStyleSheet("");
         ui->DownloadBtn->setStyleSheet("");
     }
@@ -119,9 +119,12 @@ void ModItem::changeModStatus(ModStatus new_status) {
     this->ui->DownloadBtn->setText(QString(tr(modStatusString)));
 }
 
-void ModItem::applyForgeColorTheme() {
+void ModItem::applyForgeColorTheme(bool isInDarkMode) {
     if (ModItem::_modName.substr(0, 5) == "forge") {
         this->ui->frame->setStyleSheet("QFrame{background-color: #26303d} QLabel{color: #de9e59}");
+        if (isInDarkMode) {
+            this->ui->DownloadBtn->setStyleSheet("color: white; background-color:#2E2C38; border-radius: 5px; border: 1px solid #3E3C49}");
+        }
     }
 }
 

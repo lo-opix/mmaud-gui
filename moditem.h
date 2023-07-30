@@ -27,7 +27,7 @@ public:
     std::string _modUrl;
     WaitingSpinnerWidget *spinner;
 
-    void applyForgeColorTheme();
+    void applyForgeColorTheme(bool isInDarkMode);
 
 
     explicit ModItem(const std::string &modName = "modName",

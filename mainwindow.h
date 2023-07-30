@@ -28,7 +28,7 @@ public:
 
     ~MainWindow() override;
 
-    void ShowLoadingScreen(bool show);
+    void ShowLoadingScreen(bool show, bool isInDarkMode);
 
     struct MOD {
         std::string name;

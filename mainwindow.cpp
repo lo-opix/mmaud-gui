@@ -73,7 +73,7 @@ void MainWindow::openSettings() {
     layout->addWidget(saveBtn);
 
 
-    MainWindow::ShowLoadingScreen(true);
+    MainWindow::ShowLoadingScreen(true, isInDarkMode);
 
     settingsWidget->show();
 
@@ -86,6 +86,7 @@ void MainWindow::openSettings() {
 
 void MainWindow::switchColorTheme() {
     if (!isInDarkMode) {
+        isInDarkMode = true;
         setStyleSheet(
                 "QWidget#centralwidget {background-color: #16151a} QPushButton {background-color:#2E2C38; border-radius: 5px; border: 1px solid #3E3C49}");
         ui->label_2->setStyleSheet("color: white");
@@ -93,16 +94,18 @@ void MainWindow::switchColorTheme() {
         ui->ReloadMods->setStyleSheet("color: white;");
         ui->scrollArea->setStyleSheet("background-color: #16151a");
         ui->ColorThemeBTN->setIcon(QIcon(":/Resources/Icons/Contrast-white.svg"));
+        ui->SettingsBtn->setIcon(QIcon(":/Resources/Icons/Settings-white.svg"));
 
         auto *scrollWidget = dynamic_cast<QVBoxLayout *>(ui->scrollArea->widget()->layout());
 
         for (int i = 0; i < scrollWidget->count(); ++i) {
             auto *modWidget = dynamic_cast<ModItem *>(scrollWidget->itemAt(i)->widget());
-            modWidget->setColorTheme(1);
-            modWidget->applyForgeColorTheme();
+            modWidget->setColorTheme(true);
+            modWidget->applyForgeColorTheme(isInDarkMode);
         }
-        isInDarkMode = true;
+
     } else {
+        isInDarkMode = false;
         setStyleSheet(
                 "QWidget#centralwidget {background-color: #F4F4F4} QPushButton {background-color: #EAEAEA; border-radius: 5px; border: 1px solid #CCCCCC} *{color: #111111}");
         ui->label_2->setStyleSheet("");
@@ -110,14 +113,14 @@ void MainWindow::switchColorTheme() {
         ui->ReloadMods->setStyleSheet("");
         ui->scrollArea->setStyleSheet("");
         ui->ColorThemeBTN->setIcon(QIcon(":/Resources/Icons/Contrast.svg"));
+        ui->SettingsBtn->setIcon(QIcon(":/Resources/Icons/Settings.svg"));
         auto *scrollWidget = dynamic_cast<QVBoxLayout *>(ui->scrollArea->widget()->layout());
 
         for (int i = 0; i < scrollWidget->count(); ++i) {
             auto *modWidget = dynamic_cast<ModItem *>(scrollWidget->itemAt(i)->widget());
-            modWidget->setColorTheme(0);
-            modWidget->applyForgeColorTheme();
+            modWidget->setColorTheme(false);
+            modWidget->applyForgeColorTheme(isInDarkMode);
         }
-        isInDarkMode = false;
     }
 }
 
@@ -132,14 +135,15 @@ void MainWindow::reloadMods() {
 }
 
 void MainWindow::InitModsPage() {
-    if (this->getFolderId().empty()){
-        QMessageBox::warning(this, tr("Warning"), tr("Warning: Folder Id is not set!\nSet it by clicking on the settings button"));
+    if (this->getFolderId().empty()) {
+        QMessageBox::warning(this, tr("Warning"),
+                             tr("Warning: Folder Id is not set!\nSet it by clicking on the settings button"));
     }
     auto *dl_Thread = new DownloadRemoteIndexThread(this, GoogleApiKey.c_str(), this->getFolderId());
     connect(dl_Thread, &DownloadRemoteIndexThread::dl_finished, this, &MainWindow::postRemoteIndexDownload);
     connect(dl_Thread, &DownloadRemoteIndexThread::finished, dl_Thread, &QObject::deleteLater);
 
-    this->ShowLoadingScreen(true);
+    this->ShowLoadingScreen(true, isInDarkMode);
     dl_Thread->start();
 }
 
@@ -149,7 +153,7 @@ MainWindow::~MainWindow() {
 
 
 void MainWindow::postRemoteIndexDownload(bool isOk) {
-    this->ShowLoadingScreen(true);
+    this->ShowLoadingScreen(true, isInDarkMode);
     MainPageSpinner.start();
 
     auto local_index = GetLocalIndex();
@@ -159,7 +163,7 @@ void MainWindow::postRemoteIndexDownload(bool isOk) {
 
 }
 
-void MainWindow::ShowLoadingScreen(bool show) {
+void MainWindow::ShowLoadingScreen(bool show, bool isInDarkMode) {
     if (show) {
         if (ui->frame->graphicsEffect()) {
             ui->frame->graphicsEffect()->setEnabled(true);
@@ -179,6 +183,11 @@ void MainWindow::ShowLoadingScreen(bool show) {
             ui->frame->graphicsEffect()->setEnabled(false);
         }
         this->setDisabled(false);
+    }
+    if (isInDarkMode) {
+        MainPageSpinner.setColor("white");
+    } else {
+        MainPageSpinner.setColor("black");
     }
 }
 
@@ -215,7 +224,7 @@ void MainWindow::postFindModsToDownload(std::vector<MOD> modsToDl, std::vector<s
     for (auto &mod: modsToDl) {
         std::string mod_url = "https://www.googleapis.com/drive/v3/files/" + mod.id + "?alt=media&key=" + GoogleApiKey;
         auto *modWidget = new ModItem(mod.name, "V??", mod_url);
-        modWidget->applyForgeColorTheme();
+        modWidget->applyForgeColorTheme(isInDarkMode);
         ModItem::ForgeVersionObj ForgeV;
 
         if (mod.name.substr(0, 5) == "forge") { //Check if the mod is forge
@@ -234,6 +243,7 @@ void MainWindow::postFindModsToDownload(std::vector<MOD> modsToDl, std::vector<s
 
         auto *scrollWidget = dynamic_cast<QVBoxLayout *>(ui->scrollArea->widget()->layout());
         scrollWidget->addWidget(modWidget);
+        modWidget->setColorTheme(isInDarkMode);
     }
     for (auto &mod: modsAlreadyDl) {
         auto *modWidget = new ModItem(mod);
@@ -255,11 +265,12 @@ void MainWindow::postFindModsToDownload(std::vector<MOD> modsToDl, std::vector<s
         }
 
 
-        modWidget->applyForgeColorTheme();
+        modWidget->applyForgeColorTheme(isInDarkMode);
         auto *scrollWidget = dynamic_cast<QVBoxLayout *>(ui->scrollArea->widget()->layout());
         scrollWidget->addWidget(modWidget);
+        modWidget->setColorTheme(isInDarkMode);
     }
 
 
-    this->ShowLoadingScreen(false);
+    this->ShowLoadingScreen(false, isInDarkMode);
 }
