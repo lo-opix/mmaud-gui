@@ -20,7 +20,7 @@ les obsolètes.
 ## Utilisation
 ### En tant que joueur
 
-1. Téléchargez la dernière version depuis la [page des versions](https://github.com/lo-opix/mmaud/releases/)
+1. Téléchargez la dernière version depuis la [page des versions](https://github.com/lo-opix/mmaud-gui/releases/)
 2. Décompressez le fichier
 3. Exécutez le fichier .exe
 4. Windows vous montrera un avertissement, cliquez sur "Plus d'infos" puis sur "Exécuter quand même".
