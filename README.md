@@ -20,7 +20,7 @@ outdated ones.
 ## Usage
 ### As a Player
 
-1. Download the latest release from the [releases page](https://github.com/lo-opix/mmaud/releases/)
+1. Download the latest release from the [releases page](https://github.com/lo-opix/mmaud-gui/releases/)
 2. Unzip the file
 3. Execute the .exe file
 4. Windows will show you a warning, click "More info" and then "Run anyway".
