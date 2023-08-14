@@ -45,4 +45,4 @@ If you want to contribute, you can do so by opening a pull request or an issue.
 - [Json](https://github.com/nlohmann/json) for parsing Google Drive HTTP responses 
 
 ## Known issues
-- Closing the settings window won't stop the loading screen
+- ...
