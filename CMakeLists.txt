@@ -27,7 +27,7 @@ set(PROJECT_SOURCES
         moditem.h moditem.cpp moditem.ui
         QtMmaud.qrc
 
-        ThirdParty/waitingspinnerwidget.h ThirdParty/waitingspinnerwidget.cpp secrets.h)
+        ThirdParty/waitingspinnerwidget.h ThirdParty/waitingspinnerwidget.cpp secrets.h SettingsWidget.h SettingsWidget.cpp)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(QtMmaud

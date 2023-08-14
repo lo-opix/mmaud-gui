@@ -7,7 +7,7 @@
 #include <filesystem>
 #include "secrets.h"
 #include <sys/stat.h>
-#include <QLineEdit>
+#include "SettingsWidget.h"
 
 
 using namespace std;
@@ -59,29 +59,25 @@ void MainWindow::setFolderId(const char *folder_id) {
 }
 
 void MainWindow::openSettings() {
-    auto *settingsWidget = new QWidget();
-    auto *layout = new QVBoxLayout();
-    settingsWidget->setLayout(layout);
-    auto *label = new QLabel(tr("Set your Folder id here"));
 
-    auto currentFolderId = MainWindow::getFolderId();
-
-    auto *lineEdit = new QLineEdit(tr(currentFolderId.c_str()));
-    auto *saveBtn = new QPushButton(tr("Save"));
-    layout->addWidget(label);
-    layout->addWidget(lineEdit);
-    layout->addWidget(saveBtn);
-
-
+    auto *settingsW = new SettingsWidget();
     MainWindow::ShowLoadingScreen(true, isInDarkMode);
+    this->hide();
 
-    settingsWidget->show();
 
-    connect(saveBtn, &QPushButton::released, this, [lineEdit, this] {
+    auto lineEdit = settingsW->lineEdit;
+    connect(settingsW->saveBtn, &QPushButton::released, this, [lineEdit, this] {
         MainWindow::setFolderId(lineEdit->text().toStdString().c_str());
         MainWindow::reloadMods();
     });
-    connect(saveBtn, &QPushButton::released, settingsWidget, &QWidget::hide);
+    connect(settingsW, &SettingsWidget::settingsClosed, this,
+            [this] {
+                this->ShowLoadingScreen(false, this->isInDarkMode);
+                this->show();
+            });
+
+
+    settingsW->show();
 }
 
 void MainWindow::switchColorTheme() {
